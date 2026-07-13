@@ -1,0 +1,28 @@
+# Gradle and Android build outputs
+.gradle/
+.kotlin/
+build/
+app/build/
+app/release/
+
+# Local Android Studio files
+.idea/
+*.iml
+local.properties
+
+# Packaged artifacts and signing files
+*.apk
+*.ap_
+*.aab
+*.aar
+*.jks
+*.keystore
+
+# Local reverse-engineering and diagnostic artifacts
+artifacts/
+docs/
+log/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

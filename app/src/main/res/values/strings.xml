@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Salt Player 歌词支持</string>
+    <string name="module_description">为词幕提供Salt Player（椒盐音乐）歌词，基于逆向分析实现，当前宿主兼容版本：10.8.3-release ~ 12.1.0-release</string>
+    <string name="lyricon_module_author">xiyunmn</string>
+    <string name="lyricon_module_description">基于逆向分析实现，当前宿主兼容版本：10.8.3-release ~ 12.1.0-release。</string>
+</resources>

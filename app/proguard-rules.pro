@@ -1,0 +1,1 @@
+-keep class com.xiyunmn.salthook.xposed.SaltPlayerLyriconModule { *; }
