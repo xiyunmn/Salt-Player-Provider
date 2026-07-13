@@ -55,9 +55,33 @@ jobs:
       - name: Build release APK
         run: ./gradlew :app:assembleRelease
 
-      - name: Upload APK artifacts
+      - name: Prepare APK artifacts
+        shell: bash
+        run: |
+          VERSION_NAME="$(python3 -c 'import re, pathlib; text = pathlib.Path("app/build.gradle.kts").read_text(encoding="utf-8"); print(re.search(r"versionName\s*=\s*\"([^\"]+)\"", text).group(1))')"
+          APP_NAME="Salt Player 歌词支持"
+          DEBUG_APK="$(find app/build/outputs/apk/debug -maxdepth 1 -type f -name '*.apk' | sort | head -n 1)"
+          RELEASE_APK="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | sort | head -n 1)"
+
+          test -n "$DEBUG_APK"
+          test -n "$RELEASE_APK"
+
+          mkdir -p dist/debug dist/release
+          cp "$DEBUG_APK" "dist/debug/${APP_NAME}-v${VERSION_NAME}-debug.apk"
+          cp "$RELEASE_APK" "dist/release/${APP_NAME}-v${VERSION_NAME}-release.apk"
+
+          find dist -type f -name '*.apk' -print
+
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: salt-player-provider-apks
-          path: app/build/outputs/apk/**/*.apk
+          name: Salt Player 歌词支持-debug
+          path: dist/debug/*.apk
+          if-no-files-found: error
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Salt Player 歌词支持-release
+          path: dist/release/*.apk
           if-no-files-found: error
