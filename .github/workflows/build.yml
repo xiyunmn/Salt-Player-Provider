@@ -57,12 +57,39 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
-            echo "KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
-          else
-            echo "KEYSTORE_BASE64 is not set; release APK will be unsigned."
-          fi
+          python3 - <<'PY'
+          import base64
+          import binascii
+          import os
+          import pathlib
+          import re
+          import sys
+
+          raw = os.environ.get("KEYSTORE_BASE64", "")
+          if not raw.strip():
+              print("KEYSTORE_BASE64 is not set; release APK will be unsigned.")
+              raise SystemExit(0)
+
+          text = raw.strip()
+          text = re.sub(r"^```(?:text)?\s*", "", text, flags=re.IGNORECASE)
+          text = re.sub(r"\s*```$", "", text)
+          compact = re.sub(r"\s+", "", text)
+
+          try:
+              keystore = base64.b64decode(compact, validate=True)
+          except binascii.Error as exc:
+              print("KEYSTORE_BASE64 is not valid Base64. Recreate the secret from the raw .jks file.")
+              print(f"Base64 decoder error: {exc}")
+              raise SystemExit(1)
+
+          output = pathlib.Path(os.environ["RUNNER_TEMP"]) / "release.keystore"
+          output.write_bytes(keystore)
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"KEYSTORE_FILE={output}\n")
+
+          print(f"Decoded release keystore: {len(keystore)} bytes.")
+          PY
 
       - name: Build release APK
         run: ./gradlew :app:assembleRelease
