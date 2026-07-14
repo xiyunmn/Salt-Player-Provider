@@ -102,7 +102,7 @@ jobs:
         shell: bash
         run: |
           VERSION_NAME="$(python3 -c 'import re, pathlib; text = pathlib.Path("app/build.gradle.kts").read_text(encoding="utf-8"); print(re.search(r"versionName\s*=\s*\"([^\"]+)\"", text).group(1))')"
-          APP_NAME="Salt Player 歌词支持"
+          APP_NAME="Salt-Player-Provider"
           DEBUG_APK="$(find app/build/outputs/apk/debug -maxdepth 1 -type f -name '*.apk' | sort | head -n 1)"
           RELEASE_APK="$(find app/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | sort | head -n 1)"
 
